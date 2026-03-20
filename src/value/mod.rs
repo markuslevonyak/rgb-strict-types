@@ -31,7 +31,7 @@
 
 #[macro_use]
 mod val;
-mod path;
+pub mod path;
 pub mod ston;
 pub mod typify;
 pub mod decode;
