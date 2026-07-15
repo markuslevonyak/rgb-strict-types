@@ -29,9 +29,9 @@ required-features = ["stl"]
 
 [dependencies]
 amplify = "=4.8.1"
-rgb-ascii-armor = { version = "1.0.1", optional = true }
+rgb-ascii-armor = { version = "1.0.2", optional = true }
 baid64 = "=0.4.1"
-rgb-strict-encoding = { version = "~1.0.1", features = [
+rgb-strict-encoding = { version = "~1.0.2", features = [
     "bitcoin",
 ] }
 indexmap = "2.14.0"
@@ -72,7 +72,3 @@ serde = [
 [package.metadata.docs.rs]
 all-features = true
 rustc-args = ["--cfg", "docsrs"]
-
-[patch.crates-io]
-rgb-strict-encoding = { git = "https://github.com/rgb-protocol/rgb-strict-encoding", branch = "master" }
-rgb-ascii-armor = { git = "https://github.com/rgb-protocol/rgb-ascii-armor", branch = "master" }
