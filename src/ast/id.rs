@@ -45,6 +45,7 @@ use crate::{Cls, CommitConsume, TranspileRef, Ty, TypeRef};
 pub struct SemId(
     #[from]
     #[from([u8; 32])]
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::byte_array"))]
     Bytes32,
 );
 

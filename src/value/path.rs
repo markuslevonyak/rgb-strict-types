@@ -42,10 +42,16 @@ pub enum KeyStep {
     Number(u128),
 
     #[from]
-    TinyBlob(TinyBlob),
+    TinyBlob(
+        #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+        TinyBlob,
+    ),
 
     #[from]
-    TinyString(TinyString),
+    TinyString(
+        #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+        TinyString,
+    ),
 }
 
 impl KeyStep {
@@ -116,7 +122,10 @@ pub enum Step {
 #[derive(StrictType, StrictEncode, StrictDecode)]
 #[strict_type(lib = STRICT_TYPES_LIB)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(transparent))]
-pub struct Path(SmallVec<Step>);
+pub struct Path(
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+    SmallVec<Step>,
+);
 
 impl DefaultBasedStrictDumb for Path {}
 

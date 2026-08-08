@@ -197,6 +197,7 @@ pub enum StrictNum {
     //#[from(u256)]
     //#[from(u512)]
     #[from]
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::big_int"))]
     BigUint(u1024),
 
     #[from(i8)]
@@ -210,6 +211,7 @@ pub enum StrictNum {
     //#[from(i256)]
     //#[from(i512)]
     #[from]
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::big_int"))]
     BigInt(i1024),
     // TODO: Do conversion of number types in to amplify_num
     /*

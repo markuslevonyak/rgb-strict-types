@@ -43,6 +43,7 @@ pub const TYPESYS_ID_TAG: [u8; 32] = *b"urn:ubideco:strict-types:sys:v01";
 pub struct TypeSysId(
     #[from]
     #[from([u8; 32])]
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::byte_array"))]
     Bytes32,
 );
 

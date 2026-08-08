@@ -34,6 +34,8 @@ pub(crate) use compile::NestedContext;
 pub use compile::TranslateError;
 pub use compile::{CompileError, TypeIndex};
 pub use id::TypeLibId;
+#[cfg(feature = "serde")]
+pub(crate) use symbolic::extern_types_serde;
 pub use symbolic::{ExternTypes, SymbolRef, SymbolicLib, TranspileError, TranspileRef};
 use translate::SymbolContext;
 pub use translate::SymbolError;

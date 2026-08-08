@@ -37,7 +37,9 @@ use crate::{Dependency, SemId, Translate, Ty, TypeSystem};
 #[strict_type(lib = STRICT_TYPES_LIB)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Symbols {
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
     libs: SmallOrdSet<Dependency>,
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
     symbols: MediumOrdSet<TypeSymbol>,
 }
 

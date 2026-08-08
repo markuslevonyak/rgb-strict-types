@@ -265,8 +265,11 @@ pub type TypeMap = NonEmptyOrdMap<TypeName, Ty<LibRef>, { u16::MAX as usize }>;
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct TypeLib {
     pub name: LibName,
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
     pub dependencies: TinyOrdSet<Dependency>,
+    #[cfg_attr(feature = "serde", serde(with = "crate::typelib::extern_types_serde"))]
     pub extern_types: ExternTypes,
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
     pub types: TypeMap,
 }
 

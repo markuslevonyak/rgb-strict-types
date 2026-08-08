@@ -116,7 +116,10 @@ impl SymTy {
 #[derive(StrictType, StrictEncode, StrictDecode)]
 #[strict_type(lib = STRICT_TYPES_LIB)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct TypeSystem(MediumOrdMap<SemId, Ty<SemId>>);
+pub struct TypeSystem(
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+    MediumOrdMap<SemId, Ty<SemId>>,
+);
 
 impl DefaultBasedStrictDumb for TypeSystem {}
 impl StrictSerialize for TypeSystem {}

@@ -37,14 +37,46 @@ use crate::{Dependency, LibRef, SemId, Translate, Ty, TypeLib, TypeLibId, TypeRe
 
 pub type ExternTypes = TinyOrdMap<LibName, SmallOrdMap<SemId, TypeName>>;
 
+/// Serde support for [`ExternTypes`], which nests a `Confined` collection inside another one and
+/// thus can't use the generic `strict_encoding::serde_helpers::confined` helper.
+#[cfg(feature = "serde")]
+pub(crate) mod extern_types_serde {
+    use serde::de::Error;
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+    use super::*;
+
+    pub fn serialize<S>(types: &ExternTypes, serializer: S) -> Result<S::Ok, S::Error>
+    where S: Serializer {
+        types
+            .iter()
+            .map(|(lib, sym)| (lib, sym.as_unconfined()))
+            .collect::<BTreeMap<_, _>>()
+            .serialize(serializer)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<ExternTypes, D::Error>
+    where D: Deserializer<'de> {
+        let unconfined = BTreeMap::<LibName, BTreeMap<SemId, TypeName>>::deserialize(deserializer)?;
+        let mut types = BTreeMap::new();
+        for (lib, sym) in unconfined {
+            types.insert(lib, SmallOrdMap::try_from(sym).map_err(D::Error::custom)?);
+        }
+        ExternTypes::try_from(types).map_err(D::Error::custom)
+    }
+}
+
 #[derive(Getters, Clone, Eq, PartialEq, Debug)]
 #[derive(StrictType, StrictEncode, StrictDecode)]
 #[strict_type(lib = STRICT_TYPES_LIB)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(rename_all = "camelCase"))]
 pub struct SymbolicLib {
     name: LibName,
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
     dependencies: TinyOrdSet<Dependency>,
+    #[cfg_attr(feature = "serde", serde(with = "crate::typelib::extern_types_serde"))]
     extern_types: ExternTypes,
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
     types: NonEmptyOrdMap<TypeName, Ty<TranspileRef>>,
 }
 

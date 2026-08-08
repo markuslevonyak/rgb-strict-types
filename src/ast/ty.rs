@@ -366,8 +366,18 @@ where Ref: Display
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, From)]
 #[derive(StrictDumb, StrictType, StrictEncode, StrictDecode)]
 #[strict_type(lib = STRICT_TYPES_LIB, dumb = fields!("dumb" => Ref::strict_dumb()))]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(transparent))]
-pub struct NamedFields<Ref: TypeRef>(NonEmptyVec<Field<Ref>, { u8::MAX as usize }>);
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(
+        transparent,
+        bound(serialize = "Ref: serde::Serialize", deserialize = "Ref: serde::Deserialize<'de>")
+    )
+)]
+pub struct NamedFields<Ref: TypeRef>(
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+    NonEmptyVec<Field<Ref>, { u8::MAX as usize }>,
+);
 
 impl<Ref: TypeRef> Wrapper for NamedFields<Ref> {
     type Inner = NonEmptyVec<Field<Ref>, { u8::MAX as usize }>;
@@ -441,8 +451,18 @@ where Ref: Display
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, From)]
 #[derive(StrictDumb, StrictType, StrictEncode, StrictDecode)]
 #[strict_type(lib = STRICT_TYPES_LIB, dumb = fields!(Ref::strict_dumb()))]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(transparent))]
-pub struct UnnamedFields<Ref: TypeRef>(NonEmptyVec<Ref, { u8::MAX as usize }>);
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(
+        transparent,
+        bound(serialize = "Ref: serde::Serialize", deserialize = "Ref: serde::Deserialize<'de>")
+    )
+)]
+pub struct UnnamedFields<Ref: TypeRef>(
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+    NonEmptyVec<Ref, { u8::MAX as usize }>,
+);
 
 impl<Ref: TypeRef> Wrapper for UnnamedFields<Ref> {
     type Inner = NonEmptyVec<Ref, { u8::MAX as usize }>;
@@ -508,8 +528,18 @@ where Ref: Display
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, From)]
 #[derive(StrictDumb, StrictType)]
 #[strict_type(lib = STRICT_TYPES_LIB, dumb = variants!("dumb" => Ref::strict_dumb()))]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(transparent))]
-pub struct UnionVariants<Ref: TypeRef>(NonEmptyOrdMap<Variant, Ref, { u8::MAX as usize }>);
+#[cfg_attr(
+    feature = "serde",
+    derive(Serialize, Deserialize),
+    serde(
+        transparent,
+        bound(serialize = "Ref: serde::Serialize", deserialize = "Ref: serde::Deserialize<'de>")
+    )
+)]
+pub struct UnionVariants<Ref: TypeRef>(
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+    NonEmptyOrdMap<Variant, Ref, { u8::MAX as usize }>,
+);
 
 impl<Ref: TypeRef> Wrapper for UnionVariants<Ref> {
     type Inner = NonEmptyOrdMap<Variant, Ref, { u8::MAX as usize }>;
@@ -643,7 +673,10 @@ where Ref: Display
 #[derive(StrictDumb, StrictType, StrictEncode, StrictDecode)]
 #[strict_type(lib = STRICT_TYPES_LIB, dumb = variants!("dumb"))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(transparent))]
-pub struct EnumVariants(NonEmptyOrdSet<Variant, { u8::MAX as usize }>);
+pub struct EnumVariants(
+    #[cfg_attr(feature = "serde", serde(with = "strict_encoding::serde_helpers::confined"))]
+    NonEmptyOrdSet<Variant, { u8::MAX as usize }>,
+);
 
 impl TryFrom<BTreeSet<Variant>> for EnumVariants {
     type Error = confinement::Error;

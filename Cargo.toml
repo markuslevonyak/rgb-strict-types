@@ -65,10 +65,13 @@ stl = [
 serde = [
     "dep:serde",
     "serde_json", "serde_yaml", "toml",
-    "amplify/serde", "rgb-strict-encoding/serde",
+    "rgb-strict-encoding/serde",
     "indexmap/serde"
 ]
 
 [package.metadata.docs.rs]
 all-features = true
 rustc-args = ["--cfg", "docsrs"]
+
+[patch.crates-io]
+rgb-strict-encoding = { git = "https://github.com/rgb-protocol/rgb-strict-encoding", rev = "7feb0f2" }
